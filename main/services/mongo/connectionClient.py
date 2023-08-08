@@ -34,3 +34,7 @@ class ConnectionClient:
             return True
 
         return False
+
+    def __del__(self):
+        if self._connection:
+            disconnect()
