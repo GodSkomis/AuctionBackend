@@ -10,20 +10,23 @@ class Lot(EmbeddedDocument):
     def __str__(self):
         return f"({self.price}, {self.quantity})"
 
+    def __hash__(self):
+        return hash(self.price * self.quantity)
 
-class Item(EmbeddedDocument):
-    item_id = fields.IntField(required=True, unique=True)
+
+class DateKey(Document):
+    date = fields.DateTimeField(default=datetime.now, unique=True)
+
+    def __str__(self):
+        return str(self.date)
+
+
+class Item(Document):
+    item_id = fields.IntField(required=True)
+    date = fields.ReferenceField(DateKey)
     total_quantity = fields.IntField(required=True)
     average_price = fields.FloatField(required=True)
     auctions = fields.EmbeddedDocumentListField(Lot, default=list)
 
     def __str__(self):
         return str(self.item_id)
-
-
-class DateKey(Document):
-    date = fields.DateTimeField(default=datetime.now, unique=True)
-    items = fields.EmbeddedDocumentListField(Item, default=list)
-
-    def __str__(self):
-        return str(self.date)
