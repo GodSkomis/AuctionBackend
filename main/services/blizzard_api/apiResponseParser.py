@@ -49,6 +49,8 @@ class ApiResponseParser:
                     quantity=lot_quantity
                 ))
 
+            lots = list(set(lots))
+
             item = mongo.Item()
             item.item_id = item_id
             item.auctions = lots
