@@ -15,7 +15,7 @@ class Lot(EmbeddedDocument):
 
 
 class DateKey(Document):
-    date = fields.DateTimeField(default=datetime.now, unique=True)
+    date = fields.DateTimeField(default=datetime.utcnow, unique=True)
 
     def __str__(self):
         return str(self.date)

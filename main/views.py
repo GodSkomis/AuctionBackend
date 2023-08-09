@@ -5,8 +5,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
-from .models import *
-from .services import mongoDriver
 from .tasks import *
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
