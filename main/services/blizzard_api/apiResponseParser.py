@@ -30,7 +30,7 @@ class ApiResponseParser:
         for item_id in (aucs := self._api_auctions):
             price_summ = 0
             quantity = 0
-            lots = []
+            hash_lots = {}
             raw_lots = aucs[item_id]
             raw_lots.sort()
 
@@ -44,12 +44,16 @@ class ApiResponseParser:
                 quantity += lot_quantity
                 price_summ += lot_price * lot_quantity
 
-                lots.append(mongo.Lot(
-                    price=lot_price,
-                    quantity=lot_quantity
-                ))
+                if lot_price not in hash_lots:
+                    hash_lots[lot_price] = mongo.Lot(
+                        price=lot_price,
+                        quantity=lot_quantity
+                    )
+                else:
+                    lot = hash_lots[lot_price]
+                    lot.quantity += lot_quantity
 
-            lots = list(set(lots))
+            lots = list(hash_lots.values())
 
             item = mongo.Item()
             item.item_id = item_id
