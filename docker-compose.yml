@@ -1,7 +1,7 @@
 version: "3.1"
 
 networks:
-  mongo-network:
+  auction-network:
     external: false
     driver: bridge
 
@@ -11,44 +11,57 @@ volumes:
     driver: local
     driver_opts:
       o: bind
-      device: {YOUR_PATH_TO_FOLDER}
+      device: { YOUR_PATH_TO_FOLDER }
 
 services:
   mongodb:
     build: ./mongo_docker/dockerfile
+    image: auctions-mongo-image
     container_name: auction-mongodb
     restart: always
-    mem_limit: {your_mem_limit}
+    mem_limit: { YOUR_MEM_LIMIT }
     volumes:
       - auction-volume/mongo:etc/mongo
     networks:
-      - mongo-network
+      - auction-network
 
   redis:
     image: redis:latest
     container_name: auction-redis
     restart: always
-    mem_limit: {your_mem_limit}
+    mem_limit: { YOUR_MEM_LIMIT }
     volumes:
       - auction-volume/redis/redis:/usr/local/etc/redis
       - auction-volume/redis/data:/data
     networks:
-      - mongo-network
+      - auction-network
+
+  celery:
+    build: .
+    image: auction-python-image
+    container_name: auction-celery
+    restart: always
+    mem_limit: { YOUR_MEM_LIMIT }
+    networks:
+      - auction-network
+    command: >
+      bash -c "celery -A auc worker -l info"
 
   django:
-    build: ./dockerfile-django
+    image: auction-python-image
     container_name: auction-django
     restart: always
-    mem_limit: {your_mem_limit}
+    mem_limit: { YOUR_MEM_LIMIT }
     volumes:
       - auction-volume/django/data:/data
     networks:
-      - mongo-network
-
-  celery:
-    build: ./dockerfile-celery
-    container_name: auction-celery
-    restart: always
-    mem_limit: {your_mem_limit}
-    networks:
-      - mongo-network
+      - auction-network
+    ports:
+      - { YOUR_PORT }:8000
+    command: >
+      bash -c "; \
+      python manage.py runserver 0.0.0.0:8000 --noreload"
+    environment:
+      - DJANGO_SU_USERNAME="admin"
+      - DJANGO_SU_PASSWORD="admin"
+      - DJANGO_SU_EMAIL="admin@admin:admin"
