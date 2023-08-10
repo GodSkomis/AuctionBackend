@@ -15,14 +15,12 @@ docker build --tag auction-mongo-image .
 cd ..
 docker compose up -d
 
-sleep 60
+sleep 45
 docker exec -d auction-mongodb mongo auc /tmp/create_ddbb.js
 docker exec -d auction-django python manage.py migrate
 
 sleep 10
 docker exec -d auction-django python manage.py shell -c "from django.contrib.auth.models import User; \
                         User.objects.create_superuser('$DJANGO_SU_USERNAME', '$DJANGO_SU_EMAIL', '$DJANGO_SU_PASSWORD')"
-
-docker image rmi mongo:4.4.23
 
 echo "SUCCESS"

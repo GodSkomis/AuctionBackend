@@ -5,40 +5,6 @@ networks:
     external: false
     driver: bridge
 
-volumes:
-  auction-mongodb-volume:
-    name: auction-mongodb-volume
-    driver: local
-    type:
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR}/mongo
-
-  auction-redis-volume:
-    name: auction-redis-volume
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR}/redis/redis
-
-  auction-redis-data-volume:
-    name: auction-redis-data-volume
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR}/redis/data
-
-  auction-django-volume:
-    name: auction-django-volume
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${DATA_DIR}/django
-
 services:
   mongodb:
     image: auction-mongo-image
@@ -46,7 +12,7 @@ services:
     restart: always
     mem_limit: ""
     volumes:
-      - auction-mongodb-volume:etc/mongo
+      - ${DATA_DIR}/mongo:/etc/mongo
     networks:
       - auction-network
 
@@ -56,8 +22,8 @@ services:
     restart: always
     mem_limit: ""
     volumes:
-      - auction-redis-volume:/usr/local/etc/redis
-      - auction-redis-data-volume:/data
+      - ${DATA_DIR}/redis/redis:/usr/local/etc/redis
+      - ${DATA_DIR}/redis/data:/data
     networks:
       - auction-network
 
@@ -77,11 +43,10 @@ services:
     restart: always
     mem_limit: ""
     volumes:
-      - auction-django-volume:/data
+      - ${DATA_DIR}/django/data:/data
     networks:
       - auction-network
     ports:
       - ${DJANGO_CONTAINER_PORT}:8000
     command: >
-      bash -c "; \
-      python manage.py runserver 0.0.0.0:8000 --noreload"
+      bash -c "python manage.py runserver 0.0.0.0:8000 --noreload"
