@@ -1,0 +1,54 @@
+version: "3.1"
+
+networks:
+  mongo-network:
+    external: false
+    driver: bridge
+
+volumes:
+  auction-volume:
+    name: auction-volume
+    driver: local
+    driver_opts:
+      o: bind
+      device: {YOUR_PATH_TO_FOLDER}
+
+services:
+  mongodb:
+    build: ./mongo_docker/dockerfile
+    container_name: auction-mongodb
+    restart: always
+    mem_limit: {your_mem_limit}
+    volumes:
+      - auction-volume/mongo:etc/mongo
+    networks:
+      - mongo-network
+
+  redis:
+    image: redis:latest
+    container_name: auction-redis
+    restart: always
+    mem_limit: {your_mem_limit}
+    volumes:
+      - auction-volume/redis/redis:/usr/local/etc/redis
+      - auction-volume/redis/data:/data
+    networks:
+      - mongo-network
+
+  django:
+    build: ./dockerfile-django
+    container_name: auction-django
+    restart: always
+    mem_limit: {your_mem_limit}
+    volumes:
+      - auction-volume/django/data:/data
+    networks:
+      - mongo-network
+
+  celery:
+    build: ./dockerfile-celery
+    container_name: auction-celery
+    restart: always
+    mem_limit: {your_mem_limit}
+    networks:
+      - mongo-network

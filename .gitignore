@@ -1,26 +1,14 @@
-### venv template
-# Virtualenv
-# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
-.Python
-[Bb]in
-[Ii]nclude
-[Ll]ib
-[Ll]ib64
-[Ll]ocal
-[Ss]cripts
-pyvenv.cfg
-.venv
-pip-selfcheck.json
-
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
 *$py.class
 
 # C extensions
 *.so
 
 # Distribution / packaging
+.Python
 build/
 develop-eggs/
 dist/
@@ -134,6 +122,7 @@ celerybeat.pid
 
 # Environments
 .env
+.venv
 env/
 venv/
 ENV/
@@ -148,7 +137,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-#/site
+/site
 
 # mypy
 .mypy_cache/
@@ -164,11 +153,14 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-.idea/
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
 
-# My ignore
-.gitignore
-dockerfile
-docker-compose.yml
-/mongo_docker
+# My files/folders
 /data
+.idea/
+*.sqlite3

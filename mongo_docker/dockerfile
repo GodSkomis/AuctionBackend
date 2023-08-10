@@ -1,0 +1,10 @@
+from mongo:latest
+
+ADD create_ddbb.js /tmp/
+
+RUN mongod --fork --logpath /var/log/mongodb.log \
+    && sleep 5 \
+    && mongosh auc /tmp/create_ddbb.js
+
+COPY entrypoint.sh /entrypoint.sh
+RUN . /entrypoint.sh
