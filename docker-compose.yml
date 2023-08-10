@@ -8,7 +8,7 @@ networks:
 services:
   mongodb:
     image: auction-mongo-image
-    container_name: auction-mongodb
+    container_name: auction-mongo
     restart: always
     mem_limit: ""
     volumes:
