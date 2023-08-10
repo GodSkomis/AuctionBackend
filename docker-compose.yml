@@ -9,7 +9,9 @@ volumes:
   auction-mongodb-volume:
     name: auction-mongodb-volume
     driver: local
+    type:
     driver_opts:
+      type: none
       o: bind
       device: ${DATA_DIR}/mongo
 
@@ -17,6 +19,7 @@ volumes:
     name: auction-redis-volume
     driver: local
     driver_opts:
+      type: none
       o: bind
       device: ${DATA_DIR}/redis/redis
 
@@ -24,6 +27,7 @@ volumes:
     name: auction-redis-data-volume
     driver: local
     driver_opts:
+      type: none
       o: bind
       device: ${DATA_DIR}/redis/data
 
@@ -31,6 +35,7 @@ volumes:
     name: auction-django-volume
     driver: local
     driver_opts:
+      type: none
       o: bind
       device: ${DATA_DIR}/django
 
