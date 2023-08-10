@@ -6,7 +6,8 @@ export DJANGO_CONTAINER_PORT=$(grep 'DJANGO_CONTAINER_PORT' envs.env | sed 's/^.
 
 export DATA_DIR=$(grep 'DATA_DIR' envs.env | sed 's/^.*=//')
 
-docker compose pull
+docker pull redis:latest
+
 docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG=$DJANGO_ALLOWED_HOSTS --tag auction-python-image .
 
 cd ./mongo_docker
@@ -16,7 +17,7 @@ cd ..
 docker compose up -d
 
 sleep 45
-docker exec -d auction-mongodb mongo auc /tmp/create_ddbb.js
+docker exec -d auction-mongo mongo auc /tmp/create_ddbb.js
 docker exec -d auction-django python manage.py migrate
 
 sleep 10
