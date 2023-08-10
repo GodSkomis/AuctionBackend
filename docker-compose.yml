@@ -11,28 +11,28 @@ volumes:
     driver: local
     driver_opts:
       o: bind
-      device: ${AUCTION_MONGODB_VOLUME}
+      device: ${DATA_DIR}/mongo
 
   auction-redis-volume:
     name: auction-redis-volume
     driver: local
     driver_opts:
       o: bind
-      device: ${AUCTION_REDIS_VOLUME}/redis
+      device: ${DATA_DIR}/redis/redis
 
   auction-redis-data-volume:
     name: auction-redis-data-volume
     driver: local
     driver_opts:
       o: bind
-      device: ${AUCTION_REDIS_VOLUME}/data
+      device: ${DATA_DIR}/redis/data
 
   auction-django-volume:
     name: auction-django-volume
     driver: local
     driver_opts:
       o: bind
-      device: ${AUCTION_DJANGO_VOLUME}
+      device: ${DATA_DIR}/django
 
 services:
   mongodb:
