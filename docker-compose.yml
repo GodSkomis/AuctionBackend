@@ -6,12 +6,33 @@ networks:
     driver: bridge
 
 volumes:
-  auction-volume:
-    name: auction-volume
+  auction-mongodb-volume:
+    name: auction-mongodb-volume
     driver: local
     driver_opts:
       o: bind
-      device: { YOUR_PATH_TO_FOLDER }
+      device: ${AUCTION_MONGODB_VOLUME}
+
+  auction-redis-volume:
+    name: auction-redis-volume
+    driver: local
+    driver_opts:
+      o: bind
+      device: ${AUCTION_REDIS_VOLUME}/redis
+
+  auction-redis-data-volume:
+    name: auction-redis-data-volume
+    driver: local
+    driver_opts:
+      o: bind
+      device: ${AUCTION_REDIS_VOLUME}/data
+
+  auction-django-volume:
+    name: auction-django-volume
+    driver: local
+    driver_opts:
+      o: bind
+      device: ${AUCTION_DJANGO_VOLUME}
 
 services:
   mongodb:
@@ -19,9 +40,9 @@ services:
     image: auctions-mongo-image
     container_name: auction-mongodb
     restart: always
-    mem_limit: { YOUR_MEM_LIMIT }
+    mem_limit: ""
     volumes:
-      - auction-volume/mongo:etc/mongo
+      - auction-mongodb-volume:etc/mongo
     networks:
       - auction-network
 
@@ -29,10 +50,10 @@ services:
     image: redis:latest
     container_name: auction-redis
     restart: always
-    mem_limit: { YOUR_MEM_LIMIT }
+    mem_limit: ""
     volumes:
-      - auction-volume/redis/redis:/usr/local/etc/redis
-      - auction-volume/redis/data:/data
+      - auction-redis-volume:/usr/local/etc/redis
+      - auction-redis-data-volume:/data
     networks:
       - auction-network
 
@@ -41,7 +62,7 @@ services:
     image: auction-python-image
     container_name: auction-celery
     restart: always
-    mem_limit: { YOUR_MEM_LIMIT }
+    mem_limit: ""
     networks:
       - auction-network
     command: >
@@ -51,17 +72,13 @@ services:
     image: auction-python-image
     container_name: auction-django
     restart: always
-    mem_limit: { YOUR_MEM_LIMIT }
+    mem_limit: ""
     volumes:
-      - auction-volume/django/data:/data
+      - auction-django-volume:/data
     networks:
       - auction-network
     ports:
-      - { YOUR_PORT }:8000
+      - ${DJANGO_CONTAINER_PORT}:8000
     command: >
       bash -c "; \
       python manage.py runserver 0.0.0.0:8000 --noreload"
-    environment:
-      - DJANGO_SU_USERNAME="admin"
-      - DJANGO_SU_PASSWORD="admin"
-      - DJANGO_SU_EMAIL="admin@admin:admin"
