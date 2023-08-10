@@ -12,17 +12,18 @@ export AUCTION_DJANGO_VOLUME=$(grep 'AUCTION_DJANGO_VOLUME' envs.env | sed 's/^.
 docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG=$DJANGO_ALLOWED_HOSTS --tag auction-python-image .
 
 cd ./mongo_docker
-docker build --tag auction-mongo-image
+docker build --tag auction-mongo-image .
 
 cd ..
 docker compose pull
 
 docker compose up -d
+docker image rmi mongo:4.4.23
 
 sleep 60
-
+docker exec -d auction-mongodb mongo auc /tmp/create_ddbb.js
 docker exec -d auction-django python manage.py migrate
-sleep 5
 
+sleep 10
 docker exec -d auction-django python manage.py shell -c "from django.contrib.auth.models import User; \
                         User.objects.create_superuser('$DJANGO_SU_USERNAME', '$DJANGO_SU_EMAIL', '$DJANGO_SU_PASSWORD')"
