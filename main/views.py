@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 #     return HttpResponse(status=405)
 #
 #
-def update(request):
+def manual_update(request):
     update_items_task.delay()
     return HttpResponse(status=200)
 #

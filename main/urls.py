@@ -2,5 +2,5 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('update/', update)
+    path('manual_update/', manual_update)
 ]
