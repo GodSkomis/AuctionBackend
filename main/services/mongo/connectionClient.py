@@ -15,7 +15,7 @@ class ConnectionClient:
         if not cls._connection:
             cls._connection = connect(
                 'auc',
-                host='0.0.0.0',
+                host='auction-mongo',
                 port=27017,
                 username='auction-app',
                 password='123qwe',
