@@ -9,7 +9,10 @@ export AUCTION_REDIS_VOLUME=$(grep 'AUCTION_REDIS_VOLUME' envs.env | sed 's/^.*=
 export AUCTION_DJANGO_VOLUME=$(grep 'AUCTION_DJANGO_VOLUME' envs.env | sed 's/^.*=//')
 
 
-docker compose build --build-arg DJANGO_ALLOWED_HOSTS_ARG=$DJANGO_ALLOWED_HOSTS
+docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG=$DJANGO_ALLOWED_HOSTS --tag auction-python-image .
+cd ./mongo_docker
+docker build --tag auction-mongo-image
+cd ..
 docker compose pull
 docker compose up -d
 

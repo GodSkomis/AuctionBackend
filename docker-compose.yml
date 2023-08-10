@@ -36,8 +36,7 @@ volumes:
 
 services:
   mongodb:
-    build: ./mongo_docker/dockerfile
-    image: auctions-mongo-image
+    image: auction-mongo-image
     container_name: auction-mongodb
     restart: always
     mem_limit: ""
@@ -58,7 +57,6 @@ services:
       - auction-network
 
   celery:
-    build: .
     image: auction-python-image
     container_name: auction-celery
     restart: always
