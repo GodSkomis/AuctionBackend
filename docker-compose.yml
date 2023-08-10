@@ -10,7 +10,6 @@ services:
     image: auction-mongo-image
     container_name: auction-mongo
     restart: always
-    mem_limit: ""
     volumes:
       - ${DATA_DIR}/mongo:/etc/mongo
     networks:
@@ -20,7 +19,6 @@ services:
     image: redis:latest
     container_name: auction-redis
     restart: always
-    mem_limit: ""
     volumes:
       - ${DATA_DIR}/redis/redis:/usr/local/etc/redis
       - ${DATA_DIR}/redis/data:/data
@@ -31,7 +29,6 @@ services:
     image: auction-python-image
     container_name: auction-celery
     restart: always
-    mem_limit: ""
     networks:
       - auction-network
     command: >
@@ -41,7 +38,6 @@ services:
     image: auction-python-image
     container_name: auction-django
     restart: always
-    mem_limit: ""
     volumes:
       - ${DATA_DIR}/django/data:/data
     networks:
