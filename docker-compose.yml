@@ -11,7 +11,8 @@ services:
     container_name: auction-mongo
     restart: always
     volumes:
-      - ${DATA_DIR}/mongo:/etc/mongo
+      - ${DATA_DIR}/mongo/mongo:/etc/mongo
+      - ${DATA_DIR}/mongo/data:/data
     networks:
       - auction-network
 
