@@ -8,7 +8,7 @@ export DATA_DIR=$(grep 'DATA_DIR' envs.env | sed 's/^.*=//')
 
 docker pull redis:latest
 
-docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG=$DJANGO_ALLOWED_HOSTS --tag auction-python-image .
+docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG="$DJANGO_ALLOWED_HOSTS" --tag auction-python-image .
 
 cd ./mongo_docker
 docker build --tag auction-mongo-image .
