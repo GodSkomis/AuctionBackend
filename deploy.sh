@@ -3,6 +3,7 @@ export DJANGO_SU_USERNAME=$(grep 'DJANGO_SU_USERNAME' envs.env | sed 's/^.*=//')
 export DJANGO_SU_EMAIL=$(grep 'DJANGO_SU_EMAIL' envs.env | sed 's/^.*=//')
 export DJANGO_SU_PASSWORD=$(grep 'DJANGO_SU_PASSWORD' envs.env | sed 's/^.*=//')
 export DJANGO_CONTAINER_PORT=$(grep 'DJANGO_CONTAINER_PORT' envs.env | sed 's/^.*=//')
+export MONGO_CONTAINER_PORT=$(grep 'MONGO_CONTAINER_PORT' envs.env | sed 's/^.*=//')
 
 export DATA_DIR=$(grep 'DATA_DIR' envs.env | sed 's/^.*=//')
 
