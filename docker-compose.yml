@@ -10,6 +10,8 @@ services:
     image: auction-mongo-image
     container_name: auction-mongo
     restart: always
+    ports:
+      - ${MONGO_CONTAINER_PORT}:27017
     volumes:
       - ${DATA_DIR}/mongo/mongo:/etc/mongo
       - ${DATA_DIR}/mongo/data:/data
