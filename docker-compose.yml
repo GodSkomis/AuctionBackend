@@ -32,7 +32,7 @@ services:
     networks:
       - auction-network
     command: >
-      bash -c "celery -A auc worker -l info"
+      bash -c "celery -A auc worker -l info -B"
 
   django:
     image: auction-python-image
