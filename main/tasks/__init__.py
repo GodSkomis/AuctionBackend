@@ -1,1 +1,1 @@
-from .update_items import UpdateItemsTask
+from .updateItemsTask import UpdateItemsTask
