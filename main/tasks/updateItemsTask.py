@@ -96,4 +96,4 @@ app.register_task(UpdateItemsTask())
 @worker_ready.connect
 def at_start(sender, **kwargs):
     with sender.app.connection() as conn:
-        sender.app.send_task("main.tasks.update_items.UpdateItemsTask", connection=conn)
+        sender.app.send_task("main.tasks.updateItemsTask.UpdateItemsTask", connection=conn)
