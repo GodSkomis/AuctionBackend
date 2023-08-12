@@ -5,7 +5,6 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
-from .tasks import *
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 
@@ -18,9 +17,9 @@ from django.contrib.auth.models import User
 #     return HttpResponse(status=405)
 #
 #
-def manual_update(request):
-    update_items_task.delay()
-    return HttpResponse(status=200)
+# def manual_update(request):
+#     update_items_task.delay()
+#     return HttpResponse(status=200)
 #
 #
 # @api_view(['GET'])
