@@ -17,11 +17,13 @@ from main.models.mongo import DateKey, Item
 class UpdateItemsTask(Task):
 
     def run(self, *args, **kwargs):
+        was_updated = kwargs.get('was_updated', False)
         start_time = time.time()
         datetime_of_update, api_response = self._get_api_response()
+
         dateKey = self._check_time(datetime_of_update)
         if dateKey:
-            self._handle_dateKey(dateKey)
+            self._handle_dateKey(dateKey, was_updated)
             return self._print_final_time(start_time)
 
         self._handle_without_datyKey(datetime_of_update, api_response)
@@ -41,21 +43,25 @@ class UpdateItemsTask(Task):
                 dateKey = dateKey.select_related()
         return dateKey
 
-    def _handle_dateKey(self, dateKey: DateKey) -> None:
-        new_eta = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
-
-        pprint(f"NEXT TIME OF UPDATE {new_eta}")
+    def _handle_dateKey(self, dateKey: DateKey, was_updated: bool) -> None:
         pprint(f"REPEATED DATA {dateKey}")
-
-        self.apply_async(eta=new_eta)
+        if was_updated is False:
+            new_eta = datetime.datetime.utcnow() + datetime.timedelta(minutes=10)
+            pprint(f"NEXT TIME OF UPDATE {new_eta}")
+            self.apply_async(kwargs={'was_updated': True}, eta=new_eta)
 
     def _handle_without_datyKey(self, datetime_of_update: datetime.datetime, api_response: dict) -> None:
-        items = self._parse_response(api_response)
         dateKey = self._create_dateKey(datetime_of_update)
-        self._set_date_for_items(dateKey, items)
-        self._save_objects(dateKey, items)
+        new_eta = datetime_of_update + datetime.timedelta(hours=1, minutes=10)
+        try:
+            self._save_dateKey(dateKey)
+        except NotUniqueError:
+            new_eta = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
 
-        new_eta = datetime_of_update + datetime.timedelta(hours=1, minutes=1)
+        items = self._parse_response(api_response)
+        self._set_date_for_items(dateKey, items)
+        self._save_items(items)
+
         self.apply_async(eta=new_eta)
 
         pprint(f"Next time of update {new_eta}")
@@ -72,14 +78,18 @@ class UpdateItemsTask(Task):
         return dateKey
 
     @staticmethod
+    def _save_dateKey(dateKey: DateKey) -> None:
+        with ConnectionClient():
+            dateKey.save()
+
+    @staticmethod
     def _set_date_for_items(dateKey: DateKey, items: List[Item]) -> None:
         for item in items:
             item.date = dateKey
 
     @staticmethod
-    def _save_objects(dateKey: DateKey, items: List[Item]) -> None:
+    def _save_items(items: List[Item]) -> None:
         with ConnectionClient():
-            dateKey.save()
             for item in items:
                 item.save()
 
