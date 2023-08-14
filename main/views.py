@@ -1,12 +1,13 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view
-from django.contrib.auth.models import User
+from rest_framework.views import APIView
+
+from main.services.api_response import ApiResponseDirector
+
+
+class GetItemView(APIView):
+
+    def get(self, request, item_id: int) -> HttpResponse:
+        return ApiResponseDirector.get_item_response(item_id=item_id)
 
 
 # def update_names(request):
@@ -15,11 +16,6 @@ from django.contrib.auth.models import User
 #             update_names_task.delay()
 #             return HttpResponse(status=200)
 #     return HttpResponse(status=405)
-#
-#
-# def manual_update(request):
-#     update_items_task.delay()
-#     return HttpResponse(status=200)
 #
 #
 # @api_view(['GET'])
@@ -55,5 +51,3 @@ from django.contrib.auth.models import User
 #         pass
 #
 #     return HttpResponse(status=200)
-
-# No backend authenticated the credentials
