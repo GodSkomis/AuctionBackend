@@ -38,9 +38,7 @@ class UpdateItemsTask(Task):
     def _check_time(datetime_of_update: datetime.datetime) -> None | DateKey:
         dateKey = None
         with ConnectionClient():
-            dateKey = DateKey.objects.filter(date=datetime_of_update).first()
-            if dateKey:
-                dateKey = dateKey.select_related()
+            dateKey = DateKey.objects.fields(('id', 'date')).filter(date=datetime_of_update).first()
         return dateKey
 
     def _handle_dateKey(self, dateKey: DateKey, was_updated: bool) -> None:
