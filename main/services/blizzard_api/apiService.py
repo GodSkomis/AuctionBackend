@@ -56,5 +56,5 @@ class ApiService:
         time_of_last_update = dateutil.parser.parse(time_header)
 
         self._auction_response = data
-        self._time_of_update = time_of_last_update
+        self._time_of_update = time_of_last_update.replace(microsecond=0)
         return time_of_last_update, data

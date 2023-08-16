@@ -1,23 +1,23 @@
-from typing import NewType, List, Dict
+from typing import NewType, List
 
 from .abstracts import AbstractDbCommand
 
-from main.services.mongo import ConnectionClient
-from main.models.mongo import DateKey, Item
-
-Dates = NewType('Dates', List[DateKey])
-Items = NewType('Items', List[Dict])
+from main.models.auction import DateKey, Item, Lot
+from django.db.models import Q
 
 
-class GetItemDbCommand(AbstractDbCommand):
+Lots = NewType('Items', List[dict])
+
+
+class GetLotsCommand(AbstractDbCommand):
     _item_id: int
 
     def __init__(self, item_id: int):
         self._item_id = item_id
 
-    def execute(self) -> (Dates, Items):
-        with ConnectionClient():
-            dates = DateKey.objects.all().select_related()
-            items = Item.objects.exclude('id').exclude('date').filter(item_id=self._item_id).as_pymongo().select_related()
+    def execute(self) -> (List[DateKey], List[Lots]):
+        dates = list(DateKey.objects.all())
+        items = Item.objects.filter(Q(item_id=self._item_id) & Q(date__in=dates)).all()
+        lots = list(Lot.objects.values('price', 'quantity').filter(item_entry__in=items).all())
 
-        return dates, items
+        return dates, lots
