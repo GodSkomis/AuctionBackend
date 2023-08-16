@@ -9,7 +9,6 @@ class GetItemView(APIView):
     def get(self, request, item_id: int) -> HttpResponse:
         return ApiResponseDirector.get_item_response(item_id=item_id)
 
-
 # def update_names(request):
 #     if 'pswd' in (x := request.GET):
 #         if x['pswd'] == '123qwe':

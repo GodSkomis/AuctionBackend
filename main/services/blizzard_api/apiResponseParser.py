@@ -1,6 +1,6 @@
 from typing import List
 
-from main.models import mongo
+from main.models import auction
 
 
 class ApiResponseParser:
@@ -25,14 +25,18 @@ class ApiResponseParser:
 
         self._api_auctions = result
 
-    def _get_items_list(self) -> List[mongo.Item]:
-        result = []
+    def _get_items_list(self) -> (List[auction.Item], List[List[auction.Lot]]):
+        items_result = []
+        lots_result = []
         for item_id in (aucs := self._api_auctions):
             price_summ = 0
             quantity = 0
             hash_lots = {}
             raw_lots = aucs[item_id]
             raw_lots.sort()
+
+            item = auction.Item()
+            item.item_id = item_id
 
             for i in range(len(raw_lots)):
                 if quantity > 1000:
@@ -45,7 +49,8 @@ class ApiResponseParser:
                 price_summ += lot_price * lot_quantity
 
                 if lot_price not in hash_lots:
-                    hash_lots[lot_price] = mongo.Lot(
+                    hash_lots[lot_price] = auction.Lot(
+                        item_entry=item,
                         price=lot_price,
                         quantity=lot_quantity
                     )
@@ -53,17 +58,12 @@ class ApiResponseParser:
                     lot = hash_lots[lot_price]
                     lot.quantity += lot_quantity
 
-            lots = list(hash_lots.values())
-
-            item = mongo.Item()
-            item.item_id = item_id
-            item.auctions = lots
+            lots_result.append(list(hash_lots.values()))
             item.total_quantity = quantity
-            item.average_price = round(price_summ / quantity, 2)
-            result.append(item)
+            items_result.append(item)
 
-        return result
+        return items_result, lots_result
 
-    def parse(self) -> List[mongo.Item]:
+    def parse(self) -> (List[auction.Item], List[List[auction.Lot]]):
         self._parse_raw_response()
         return self._get_items_list()
