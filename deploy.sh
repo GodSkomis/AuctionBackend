@@ -8,11 +8,7 @@ export DATA_DIR=$(grep 'DATA_DIR' envs.env | sed 's/^.*=//')
 
 docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG="$DJANGO_ALLOWED_HOSTS" --tag auction-python-image .
 
-cd ./postgres_docker
-docker build --tag auction-postgres-image .
-cd ..
-
-docker compose pull redis
+docker compose pull redis postgres
 
 docker compose up -d
 
