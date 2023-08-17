@@ -19,9 +19,7 @@ docker exec -id auction-postgres psql -U postgres -c "CREATE DATABASE auc;"
 sleep 1
 docker exec -id auction-postgres psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE auc TO auction_app;"
 sleep 1
-docker exec -id auction-postgres psql -U postgres -c "\c auc;"
-sleep 1
-docker exec -id auction-postgres psql -U postgres -c "GRANT ALL ON SCHEMA public TO auction_app;"
+docker exec -id auction-postgres psql -d auc -U postgres -c "GRANT ALL ON SCHEMA public TO auction_app;"
 
 sleep 10
 docker exec -d auction-django python manage.py migrate
