@@ -1,5 +1,0 @@
-CREATE USER auction_app WITH ENCRYPTED PASSWORD '123qwe';
-CREATE DATABASE auc;
-GRANT ALL PRIVILEGES ON DATABASE auc TO auction_app;
-\c auc;
-GRANT ALL ON SCHEMA public TO auction_app;

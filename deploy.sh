@@ -16,7 +16,18 @@ docker compose pull redis
 
 docker compose up -d
 
-sleep 20
+sleep 10
+docker exec -id auction-postgres psql -U postgres -c "CREATE USER auction_app WITH ENCRYPTED PASSWORD '123qwe';"
+sleep 1
+docker exec -id auction-postgres psql -U postgres -c "CREATE DATABASE auc;"
+sleep 1
+docker exec -id auction-postgres psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE auc TO auction_app;"
+sleep 1
+docker exec -id auction-postgres psql -U postgres -c "\c auc;"
+sleep 1
+docker exec -id auction-postgres psql -U postgres -c "GRANT ALL ON SCHEMA public TO auction_app;"
+
+sleep 10
 docker exec -d auction-django python manage.py migrate
 
 sleep 10
