@@ -5,21 +5,18 @@ export DJANGO_SU_PASSWORD=$(grep 'DJANGO_SU_PASSWORD' envs.env | sed 's/^.*=//')
 export POSTGRES_PASSWORD=$(grep 'POSTGRES_PASSWORD' envs.env | sed 's/^.*=//')
 export DATA_DIR=$(grep 'DATA_DIR' envs.env | sed 's/^.*=//')
 
+
 docker build --build-arg DJANGO_ALLOWED_HOSTS_ARG="$DJANGO_ALLOWED_HOSTS" --tag auction-python-image .
-docker compose pull postgres redis
+
+cd ./postgres_docker
+docker build --tag auction-postgres-image .
+cd ..
+
+docker compose pull redis
 
 docker compose up -d
 
 sleep 20
-docker exec -d auction-postgres psql -U postgres -c "CREATE DATABASE auc;"
-sleep 1
-docker exec -d auction-postgres psql -U postgres -c "CREATE USER auction_app WITH ENCRYPTED PASSWORD '123qwe';"
-sleep 1
-docker exec -d auction-postgres psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE auc TO auction_app;"
-sleep 1
-docker exec -d auction-postgres psql -U postgres c "GRANT ALL ON SCHEMA public TO auction_app;"
-
-sleep 5
 docker exec -d auction-django python manage.py migrate
 
 sleep 10

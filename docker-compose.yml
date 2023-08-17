@@ -7,7 +7,7 @@ networks:
 
 services:
   postgres:
-    image: postgres:bullseye
+    image: auction-postgres-image
     container_name: auction-postgres
     restart: always
     ports:
