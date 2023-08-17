@@ -172,3 +172,4 @@ dockerfile
 docker-compose.yml
 /mongo_docker
 /data
+*/migrations

@@ -6,15 +6,17 @@ networks:
     driver: bridge
 
 services:
-  mongodb:
-    image: auction-mongo-image
-    container_name: auction-mongo
+  postgres:
+    image: postgres:bullseye
+    container_name: auction-postgres
     restart: always
     ports:
-      - ${MONGO_CONTAINER_PORT}:27017
+      - "5433:5432"
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - ${DATA_DIR}/mongo/mongo:/etc/mongo
-      - ${DATA_DIR}/mongo/data:/data
+      - ${DATA_DIR}/postgres:/var/lib/postgresql/data
     networks:
       - auction-network
 
@@ -46,6 +48,6 @@ services:
     networks:
       - auction-network
     ports:
-      - ${DJANGO_CONTAINER_PORT}:8000
+      - "8000:8000"
     command: >
       bash -c "python manage.py runserver 0.0.0.0:8000 --noreload"
