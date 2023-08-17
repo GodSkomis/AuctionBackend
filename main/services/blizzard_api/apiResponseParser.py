@@ -25,11 +25,10 @@ class ApiResponseParser:
 
         self._api_auctions = result
 
-    def _get_items_list(self) -> (List[auction.Item], List[List[auction.Lot]]):
+    def _get_items_list(self) -> List[auction.Item]:
         items_result = []
         lots_result = []
         for item_id in (aucs := self._api_auctions):
-            price_summ = 0
             quantity = 0
             hash_lots = {}
             raw_lots = aucs[item_id]
@@ -46,24 +45,21 @@ class ApiResponseParser:
                 lot_quantity = raw_lots[i][1]
 
                 quantity += lot_quantity
-                price_summ += lot_price * lot_quantity
 
                 if lot_price not in hash_lots:
-                    hash_lots[lot_price] = auction.Lot(
-                        item_entry=item,
-                        price=lot_price,
-                        quantity=lot_quantity
-                    )
+                    hash_lots[lot_price] = {
+                        "price": lot_price,
+                        "quantity": lot_quantity
+                    }
                 else:
                     lot = hash_lots[lot_price]
-                    lot.quantity += lot_quantity
+                    lot['quantity'] += lot_quantity
 
-            lots_result.append(list(hash_lots.values()))
-            item.total_quantity = quantity
+            item.lots = list(hash_lots.values())
             items_result.append(item)
 
-        return items_result, lots_result
+        return items_result
 
-    def parse(self) -> (List[auction.Item], List[List[auction.Lot]]):
+    def parse(self) -> List[auction.Item]:
         self._parse_raw_response()
         return self._get_items_list()

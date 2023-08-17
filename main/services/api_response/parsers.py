@@ -1,10 +1,11 @@
 from typing import List
 
 from .abstracts import AbstractDbResponseParser
+from main.models.auction import Item
 
 
 class GetItemParser(AbstractDbResponseParser):
 
     @classmethod
-    def parse(cls, db_response: (List, List)) -> List:
-        return [{str(db_response[0][i].date): db_response[1][i]} for i in range(len(db_response[0]))]
+    def parse(cls, items: List[Item]) -> List:
+        return [{str(items[i]['date']): items[i]['lots']} for i in range(len(items))]

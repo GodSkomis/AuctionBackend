@@ -1,12 +1,20 @@
-from typing import NewType, List
+from typing import TypedDict, List
+import datetime
 
 from .abstracts import AbstractDbCommand
 
-from main.models.auction import DateKey, Item, Lot
+from main.models.auction import DateKey, Item
 from django.db.models import Q
 
 
-Lots = NewType('Items', List[dict])
+class LotDict(TypedDict):
+    price: int
+    quantity: int
+
+
+class ItemDict(TypedDict):
+    lots: List[LotDict]
+    date: datetime.datetime
 
 
 class GetLotsCommand(AbstractDbCommand):
@@ -15,9 +23,8 @@ class GetLotsCommand(AbstractDbCommand):
     def __init__(self, item_id: int):
         self._item_id = item_id
 
-    def execute(self) -> (List[DateKey], List[Lots]):
-        dates = list(DateKey.objects.all())
-        items = Item.objects.filter(Q(item_id=self._item_id) & Q(date__in=dates)).all()
-        lots = list(Lot.objects.values('price', 'quantity').filter(item_entry__in=items).all())
+    def execute(self) -> List[ItemDict]:
+        dates = DateKey.objects.all()
+        items = Item.objects.values('lots', 'date').filter(Q(item_id=self._item_id) & Q(date__in=dates)).all()
 
-        return dates, lots
+        return items

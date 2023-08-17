@@ -9,7 +9,7 @@ from pprint import pprint
 from auc.celery import app
 
 from main.services.blizzard_api import ApiService, ApiResponseParser
-from main.models.auction import DateKey, Item, Lot
+from main.models.auction import DateKey, Item
 
 
 class UpdateItemsTask(Task):
@@ -45,10 +45,9 @@ class UpdateItemsTask(Task):
         dateKey = self._create_dateKey(datetime_of_update)
         new_eta = datetime_of_update.replace(microsecond=0) + datetime.timedelta(hours=1, minutes=10)
         self._save_dateKey(dateKey)
-        items, lots = self._parse_response(api_response)
+        items = self._parse_response(api_response)
         self._set_date_for_items(dateKey, items)
         self._save_items(items)
-        self._save_lots(lots)
 
         self.apply_async(eta=new_eta)
 
@@ -78,12 +77,6 @@ class UpdateItemsTask(Task):
     def _save_items(items: List[Item]) -> None:
         for item in items:
             item.save()
-
-    @staticmethod
-    def _save_lots(lots: List[List[Lot]]) -> None:
-        for query in lots:
-            for lot in query:
-                lot.save()
 
     @staticmethod
     def _print_final_time(start_time: float) -> float:
