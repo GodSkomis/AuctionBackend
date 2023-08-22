@@ -104,11 +104,11 @@ AUTH_PASSWORD_VALIDATORS = [
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://auction-celery/2",
+        "LOCATION": "redis://auction-redis/2",
     },
     "items": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://auction-celery/3",
+        "LOCATION": "redis://auction-redis/3",
     }
 }
 
