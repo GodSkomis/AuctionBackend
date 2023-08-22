@@ -1,7 +1,7 @@
 from typing import TypedDict, List
 import datetime
 
-from .abstracts import AbstractDbCommand
+from .abstracts import AbstractItemCommand
 
 from main.models.auction import DateKey, Item
 from django.db.models import Q
@@ -17,11 +17,7 @@ class ItemDict(TypedDict):
     date: datetime.datetime
 
 
-class GetLotsCommand(AbstractDbCommand):
-    _item_id: int
-
-    def __init__(self, item_id: int):
-        self._item_id = item_id
+class GetDbLotsCommand(AbstractItemCommand):
 
     def execute(self) -> List[ItemDict]:
         dates = DateKey.objects.all()

@@ -9,16 +9,18 @@ from pprint import pprint
 from auc.celery import app
 
 from main.services.blizzard_api import ApiService, ApiResponseParser
+from main.services.cacheService import CacheService
+
 from main.models.auction import DateKey, Item
 
 
 class UpdateItemsTask(Task):
 
     def run(self, *args, **kwargs):
-        was_updated = kwargs.get('was_updated', False)
         start_time = time.time()
         datetime_of_update, api_response = self._get_api_response()
         if self._check_time(datetime_of_update):
+            was_updated = kwargs.get('was_updated', False)
             self._repeat(datetime_of_update, was_updated)
             return self._print_final_time(start_time)
 
@@ -50,6 +52,7 @@ class UpdateItemsTask(Task):
         self._save_items(items)
 
         self.apply_async(eta=new_eta)
+        self._clear_cache()
 
         pprint(f"Next time of update {new_eta}")
 
@@ -83,6 +86,10 @@ class UpdateItemsTask(Task):
         final_time = round(time.time() - start_time, 2)
         print(final_time)
         return final_time
+
+    @staticmethod
+    def _clear_cache():
+        CacheService.clear_items()
 
 
 app.register_task(UpdateItemsTask())

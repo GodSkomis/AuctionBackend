@@ -1,12 +1,15 @@
-from django.http import HttpResponse
+from typing import Any
+
 from django.http.response import JsonResponse
 
 from .abstracts import AbstractApiResponseBuilder
 
 
 class ApiResponseBuilder(AbstractApiResponseBuilder):
-
-    def get_response(self) -> HttpResponse:
+    def get_data(self) -> Any:
         db_response = self._db_command.execute()
-        data = self._parser.parse(db_response)
+        return self._parser.parse(db_response)
+
+    @staticmethod
+    def create_response(data: Any):
         return JsonResponse(data={"data": data}, status=200)
