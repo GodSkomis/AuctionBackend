@@ -8,4 +8,4 @@ class GetItemParser(AbstractDbResponseParser):
 
     @classmethod
     def parse(cls, items: List[Item]) -> List:
-        return [{str(items[i]['date']): items[i]['lots']} for i in range(len(items))]
+        return [{'date': str(items[i]['date']), 'lots': items[i]['lots']} for i in range(len(items))]
